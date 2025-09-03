@@ -1,71 +1,28 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FateMakeupApi.Data;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Threading.Tasks;
 
 namespace FateMakeupApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MakeupController : ControllerBase
+    public class MakeupController(MakeupDBContext context) : ControllerBase
     {
-        static private List<Makeup> makeups = new List<Makeup>
-        {
-            new Makeup
-            {
-                ID = 1,
-                Name = "Matte Lipstick",
-                Brand = "MAC",
-                Type = "Lipstick",
-                Category = "Lips",
-                Description = "Long-lasting matte finish lipstick in Ruby Woo shade."
-            },
-            new Makeup
-            {
-                ID = 2,
-                Name = "Liquid Foundation",
-                Brand = "Maybelline",
-                Type = "Foundation",
-                Category = "Face",
-                Description = "Lightweight foundation with full coverage and SPF 20."
-            },
-            new Makeup
-            {
-                ID = 3,
-                Name = "Eyeshadow Palette",
-                Brand = "Urban Decay",
-                Type = "Eyeshadow",
-                Category = "Eyes",
-                Description = "12-shade palette featuring warm neutrals and shimmer tones."
-            },
-            new Makeup
-            {
-                ID = 4,
-                Name = "Volumizing Mascara",
-                Brand = "L'Oréal",
-                Type = "Mascara",
-                Category = "Eyes",
-                Description = "Mascara that provides intense volume and length."
-            },
-            new Makeup
-            {
-                ID = 5,
-                Name = "Blush Powder",
-                Brand = "NARS",
-                Type = "Blush",
-                Category = "Cheeks",
-                Description = "Highly pigmented blush in the shade Orgasm."
-            }
-    };
-        
+        private readonly MakeupDBContext _context = context;
+
+
         [HttpGet]
-        public ActionResult<Makeup> GetMakeup()
+        public async Task<ActionResult<List<Makeup>>> GetMakeup()
         {
-            return Ok(makeups);
+            return Ok(await _context.Makeups.ToListAsync());
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Makeup> GetMakeupById(int id)
+        public async Task<ActionResult<Makeup>> GetMakeupById(int id)
         {
-            var makeup = makeups.FirstOrDefault(m => m.ID == id);
+            var makeup = await _context.Makeups.FindAsync(id);
             if (makeup == null)
             {
                 return NotFound();
@@ -74,22 +31,22 @@ namespace FateMakeupApi.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Makeup> AddMakeup(Makeup newMakeup)
+        public async Task<ActionResult<Makeup>> AddMakeup(Makeup newMakeup)
         {
-            if(newMakeup is null)
+            if (newMakeup is null)
             {
                 return BadRequest();
             }
-            newMakeup.ID = makeups.Max(m => m.ID) + 1;
-            makeups.Add(newMakeup);
+            _context.Makeups.Add(newMakeup);
+            await _context.SaveChangesAsync();
             return CreatedAtAction(nameof(GetMakeupById), new { id = newMakeup.ID }, newMakeup);
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateMakeup(int id, Makeup updatedMakeup)
+        public async Task<IActionResult> UpdateMakeup(int id, Makeup updatedMakeup)
         {
-            var makeup = makeups.FirstOrDefault(m => m.ID == id);
-            if (makeup is null)
+            var makeup = await _context.Makeups.FindAsync(id);
+            if (makeup == null)
             {
                 return NotFound();
             }
@@ -98,18 +55,21 @@ namespace FateMakeupApi.Controllers
             makeup.Type = updatedMakeup.Type;
             makeup.Category = updatedMakeup.Category;
             makeup.Description = updatedMakeup.Description;
+
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteMakeup(int id)
+        public async Task<IActionResult> DeleteMakeup(int id)
         {
-            var makeup = makeups.FirstOrDefault(m => m.ID == id);
-            if (makeup is null)
+            var makeup = await _context.Makeups.FindAsync(id);
+            if (makeup == null)
             {
                 return NotFound();
             }
-            makeups.Remove(makeup);
+            _context.Makeups.Remove(makeup);
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
