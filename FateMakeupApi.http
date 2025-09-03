@@ -1,0 +1,6 @@
+@FateMakeupApi_HostAddress = http://localhost:5220
+
+GET {{FateMakeupApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
