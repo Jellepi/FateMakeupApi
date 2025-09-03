@@ -67,5 +67,17 @@ namespace FateMakeupApi.Controllers
             }
             return Ok(makeup);
         }
+
+        [HttpPost]
+        public ActionResult<Makeup> AddMakeup(Makeup newMakeup)
+        {
+            if(newMakeup is null)
+            {
+                return BadRequest();
+            }
+            newMakeup.ID = makeups.Max(m => m.ID) + 1;
+            makeups.Add(newMakeup);
+            return CreatedAtAction(nameof(GetMakeupById), new { id = newMakeup.ID }, newMakeup);
+        }
     }
 }
