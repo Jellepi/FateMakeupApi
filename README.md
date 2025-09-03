@@ -14,12 +14,15 @@ API testing was done through OpenAPI and Scalar.
 - Interactive API testing with Swagger / OpenAPI
 
 ## 📖 API Endpoints
-Method		Endpoint			Description
-GET		/api/makeup				Get all makeup items
-GET		/api/makeup/{id}		Get a makeup item by ID
-POST	/api/makeup				Create a new makeup item
-PUT		/api/makeup/{id}		Update an existing makeup item
-DELETE	/api/makeup/{id}		Delete a makeup item by ID
+
+| Method | Endpoint            | Description                     |
+|--------|---------------------|---------------------------------|
+| GET    | `/api/makeup`       | Get all makeup items            |
+| GET    | `/api/makeup/{id}`  | Get a makeup item by ID         |
+| POST   | `/api/makeup`       | Create a new makeup item        |
+| PUT    | `/api/makeup/{id}`  | Update an existing makeup item  |
+| DELETE | `/api/makeup/{id}`  | Delete a makeup item by ID      |
+
 
 Example Request (POST)
 {
